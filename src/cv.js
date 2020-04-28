@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import { consultant, company } from './consultant';
 
 const font = 'Arial';
-const textSize = 18;
+const textSize = 18; // 9 pt
 
 export const doc = new Document();
 
@@ -33,7 +33,7 @@ const name = new Paragraph({
     new TextRun({
       text: consultant.firstLine,
       bold: true,
-      size: 26, // 14pt
+      size: 26, // 13pt
       allCaps: true,
       font: { name: font },
     }),
@@ -125,19 +125,19 @@ const table = new Table({
   width: { size: 100, type: 'pct' },
   borders: {
     top: {
-      color: '#ffffff',
+      style: 'NONE',
     },
     bottom: {
-      color: '#ffffff',
+      style: 'NONE',
     },
     left: {
-      color: '#ffffff',
+      style: 'NONE',
     },
     right: {
-      color: '#ffffff',
+      style: 'NONE',
     },
     insideHorizontal: {
-      color: '#ffffff',
+      style: 'NONE',
     },
   },
   rows: [
