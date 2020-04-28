@@ -6,7 +6,6 @@ import {
   TableRow,
   Media,
   TextRun,
-  HeadingLevel,
   Header,
   Footer,
 } from 'docx';
@@ -79,11 +78,7 @@ const getTitle = (title, text = '') => {
         bold: true,
         font: { name: font },
       }),
-      new TextRun({
-        text: text,
-        size: textSize,
-        font: { name: font },
-      }),
+      getText(text),
     ],
   });
 };
@@ -180,58 +175,60 @@ const table = new Table({
   ],
 });
 
-const experiences = consultant.experience.flatMap((experience) => {
-  return [
-    new Paragraph(''), // Paragraph to prevent the tables from merging
-    new Table({
-      width: { size: 100, type: 'pct' },
-      borders: {
-        top: {
-          color: '#ffffff',
+const experiences = consultant.experience
+  .flatMap((experience) => {
+    return [
+      new Paragraph(''), // Paragraph to prevent the tables from merging
+      new Table({
+        width: { size: 100, type: 'pct' },
+        borders: {
+          top: {
+            color: '#ffffff',
+          },
+          bottom: {
+            color: '#ffffff',
+          },
+          left: {
+            color: '#ffffff',
+          },
+          right: {
+            color: '#ffffff',
+          },
+          insideVertical: {
+            color: '#ffffff',
+          },
         },
-        bottom: {
-          color: '#ffffff',
-        },
-        left: {
-          color: '#ffffff',
-        },
-        right: {
-          color: '#ffffff',
-        },
-        insideVertical: {
-          color: '#ffffff',
-        },
-      },
-      rows: [
-        new TableRow({
-          tableHeader: true,
-          children: [
-            new TableCell({
-              width: { size: 30, type: 'pct' },
-              children: [getTitle(experience.from + ' - ' + experience.to)],
-            }),
-            new TableCell({
-              width: { size: 70, type: 'pct' },
-              children: [getTitle(experience.secondLine)],
-            }),
-          ],
-        }),
-        new TableRow({
-          children: [
-            new TableCell({ width: { size: 30, type: 'pct' }, children: [] }),
-            new TableCell({
-              width: { size: 70, type: 'pct' },
-              children: [
-                getTitle('Role: ', experience.firstLine),
-                getTitle('Project: ', experience.about),
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-  ];
-});
+        rows: [
+          new TableRow({
+            tableHeader: true,
+            children: [
+              new TableCell({
+                width: { size: 30, type: 'pct' },
+                children: [getTitle(experience.from + ' - ' + experience.to)],
+              }),
+              new TableCell({
+                width: { size: 70, type: 'pct' },
+                children: [getTitle(experience.secondLine)],
+              }),
+            ],
+          }),
+          new TableRow({
+            children: [
+              new TableCell({ width: { size: 30, type: 'pct' }, children: [] }),
+              new TableCell({
+                width: { size: 70, type: 'pct' },
+                children: [
+                  getTitle('Role: ', experience.firstLine),
+                  getTitle('Project: ', experience.about),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+    ];
+  })
+  .slice(1); // Remove the first paragraph
 
 doc.addSection({
   headers: {
@@ -311,7 +308,3 @@ doc.addSection({
   },
   children: [table, new Paragraph(''), getTitle('Projects'), ...experiences],
 });
-
-// Add paragraph
-
-// Add section
