@@ -14,6 +14,9 @@ import * as fs from 'fs';
 
 import { consultant, company } from './consultant';
 
+const font = 'Arial';
+const textSize = 18;
+
 export const doc = new Document();
 
 const image1 = Media.addImage(
@@ -33,6 +36,7 @@ const name = new Paragraph({
       bold: true,
       size: 26, // 14pt
       allCaps: true,
+      font: { name: font },
     }),
   ],
 });
@@ -43,6 +47,7 @@ const role = new Paragraph({
     new TextRun({
       text: consultant.secondLine,
       size: 24,
+      font: { name: font },
     }),
   ],
 });
@@ -54,9 +59,10 @@ const getBulletTitle = (text) => {
     children: [
       new TextRun({
         text: text,
-        size: 18,
+        size: textSize,
         allCaps: true,
         bold: true,
+        font: { name: font },
       }),
     ],
   });
@@ -68,36 +74,54 @@ const getTitle = (title, text = '') => {
     children: [
       new TextRun({
         text: title,
-        size: 18,
+        size: textSize,
         allCaps: true,
         bold: true,
+        font: { name: font },
       }),
       new TextRun({
         text: text,
-        size: 18,
+        size: textSize,
+        font: { name: font },
       }),
     ],
   });
 };
 
+const getText = (text) => {
+  return new TextRun({
+    text: text,
+    size: textSize,
+    font: { name: font },
+  });
+};
+
 const industries = consultant.branches.map((indutry) => {
-  return new Paragraph({ text: indutry.name, bullet: { level: 0 } });
+  return new Paragraph({
+    children: [getText(indutry.name)],
+    bullet: { level: 0 },
+  });
 });
 
 const skills = consultant.scoredSkills.map((skill) => {
-  return new Paragraph({ text: skill.skill.name, bullet: { level: 0 } });
+  return new Paragraph({
+    children: [getText(skill.skill.name)],
+    bullet: { level: 0 },
+  });
 });
 
 const languages = consultant.languages.map((language) => {
   return new Paragraph({
-    text: language.language.englishName + ', ' + language.skillLevel,
+    children: [
+      getText(language.language.englishName + ', ' + language.skillLevel),
+    ],
     bullet: { level: 0 },
   });
 });
 
 const education = consultant.education.map((education) => {
   return new Paragraph({
-    text: education.name + ', ' + education.school,
+    children: [getText(education.name + ', ' + education.school)],
     bullet: { level: 0 },
   });
 });
@@ -132,9 +156,9 @@ const table = new Table({
             name,
             role,
             getTitle('Profile'),
-            new Paragraph(consultant.summary),
+            new Paragraph({ children: [getText(consultant.summary)] }),
             new Paragraph(' '),
-            new Paragraph(consultant.about),
+            new Paragraph({ children: [getText(consultant.about)] }),
           ],
         }),
         new TableCell({
@@ -158,7 +182,7 @@ const table = new Table({
 
 const experiences = consultant.experience.flatMap((experience) => {
   return [
-    new Paragraph(''),
+    new Paragraph(''), // Paragraph to prevent the tables from merging
     new Table({
       width: { size: 100, type: 'pct' },
       borders: {
@@ -180,6 +204,7 @@ const experiences = consultant.experience.flatMap((experience) => {
       },
       rows: [
         new TableRow({
+          tableHeader: true,
           children: [
             new TableCell({
               width: { size: 30, type: 'pct' },
@@ -244,7 +269,7 @@ doc.addSection({
               style: 'NONE',
             },
           },
-          width: { size: 30, type: 'pct' },
+          width: { size: 50, type: 'pct' },
           rows: [
             new TableRow({
               children: [
@@ -256,7 +281,8 @@ doc.addSection({
                         new TextRun({
                           text: company.name,
                           bold: true,
-                          size: 18,
+                          size: textSize,
+                          font: { name: font },
                         }),
                       ],
                     }),
@@ -266,28 +292,13 @@ doc.addSection({
                   width: { size: 50, type: 'pct' },
                   children: [
                     new Paragraph({
-                      children: [
-                        new TextRun({
-                          text: company.contactInformation.address,
-                          size: 18,
-                        }),
-                      ],
+                      children: [getText(company.contactInformation.address)],
                     }),
                     new Paragraph({
-                      children: [
-                        new TextRun({
-                          text: company.contactInformation.zip,
-                          size: 18,
-                        }),
-                      ],
+                      children: [getText(company.contactInformation.zip)],
                     }),
                     new Paragraph({
-                      children: [
-                        new TextRun({
-                          text: company.contactInformation.city,
-                          size: 18,
-                        }),
-                      ],
+                      children: [getText(company.contactInformation.city)],
                     }),
                   ],
                 }),
@@ -298,7 +309,7 @@ doc.addSection({
       ],
     }),
   },
-  children: [table, getTitle('Projects'), ...experiences],
+  children: [table, new Paragraph(''), getTitle('Projects'), ...experiences],
 });
 
 // Add paragraph

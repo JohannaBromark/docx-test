@@ -19,7 +19,7 @@ export const consultant = {
     },
     {
       firstLine: 'Project Manager',
-      secondLine: 'Apple',
+      secondLine: 'Google',
       thirdLine: 'Silicon Valley',
       from: '2015-03-04',
       to: '2017-12-12',
